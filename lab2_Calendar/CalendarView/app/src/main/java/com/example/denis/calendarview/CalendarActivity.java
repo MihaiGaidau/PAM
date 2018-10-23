@@ -96,7 +96,7 @@ public class CalendarActivity extends AppCompatActivity {
         Log.d("misa","a ajuns si aici");
         if (myEvents != null && myEvents.getCount() >0) {
             Log.d("misa","s-a gasit elemente");
-            Log.d("misa",myEvents.getString(0));
+            Log.d("misa",myEvents.getString(1));
             Log.d("misa","6");
             myId = Integer.parseInt(myEvents.getString(0));
             Log.d("misa","1");

@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
-        SQLiteDatabase db = this.getWritableDatabase();
+       // SQLiteDatabase db = this.getWritableDatabase();
         Log.d("misa","baza s-a creat");
         //onCreate(db);
     }
@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("misa","tabelul urmeaza sa se creeze");
-        db.execSQL("create table "+ TABLE_NAME +" (ID INTEGER PRIMARY KEY AUTOINCREMENT, DDATE TEXT, TITLE TEXT, LOCATION TEXT, STARTTIME TEXT, ENDTIME TEXT, NOTE TEXT)");
+        db.execSQL("create table "+ TABLE_NAME +" (ID INTEGER PRIMARY KEY AUTOINCREMENT, DDATE VARCHAR(255), TITLE VARCHAR(255), LOCATION VARCHAR(255), STARTTIME VARCHAR(255), ENDTIME VARCHAR(255), NOTE VARCHAR(255))");
         Log.d("misa","tabelul sa creat");
     }
 
@@ -103,12 +103,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return true;
     }
     public Cursor getById(String id){
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where ID = ?",new String[] {id});
         return res;
     }
     public Cursor getAllDay(String date){
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where DDATE= ?",new String[]{date});
         return res;
     }
