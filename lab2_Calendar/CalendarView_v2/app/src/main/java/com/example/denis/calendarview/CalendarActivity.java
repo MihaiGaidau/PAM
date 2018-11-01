@@ -20,15 +20,21 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Vector;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+
 public class CalendarActivity extends AppCompatActivity {
-    DatabaseHelper myDb;
     Intent intent;
     Intent intent1;
     Intent sendItem;
     String myDate;
     Button addBtn;
     ListView listEvents;
-    Integer myId = -1;
+    String myId = "-1";
+    Realm realm;
+    RealmResults<Event> events;
+    //Integer number;
+    List<String> eventsShow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,15 +42,18 @@ public class CalendarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar_layout);
 
-       myDb = new DatabaseHelper(this);
+        Realm.init(getApplicationContext());
+        realm = Realm.getDefaultInstance();
         intent = getIntent();
         myDate = intent.getStringExtra("studioData");
         addBtn = (Button)findViewById(R.id.add_btn);
+        listEvents = (ListView) findViewById(R.id.activity_list);
 
         Log.d("misa","a ajuns");
+        readDate();
         initializeDisplayContent();
-        addBtnClick();
         itemListEventsClick();
+        addBtnClick();
     }
 
     private void itemListEventsClick() {
@@ -53,26 +62,14 @@ public class CalendarActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 sendItem = new Intent (CalendarActivity.this,EventActivity.class);
                 sendItem.putExtra("selectedDate",myDate);
-                sendItem.putExtra("selectedId",Long.toString(id+myId));
+                sendItem.putExtra("selectedId",eventsShow.get((int)id));
                 Log.d("misa","el se apasa singur");
+                Log.d("misa",eventsShow.get((int)id));
                 startActivity(sendItem);
             }
         });
     }
-//    private void initializeDisplayContent(){
-//        final ListView listEvents = (ListView) findViewById(R.id.activity_list);
-////        CursorAdapter adapterEvents = new CursorAdapter() {
-////            @Override
-////            public View newView(Context context, Cursor cursor, ViewGroup parent) {
-////                return null;
-////            }
-////
-////            @Override
-////            public void bindView(View view, Context context, Cursor cursor) {
-////
-////            }
-////        };
-//    }
+
 
     private void addBtnClick(){
         addBtn.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +77,7 @@ public class CalendarActivity extends AppCompatActivity {
             public void onClick(View v) {
                 intent1 = new Intent(CalendarActivity.this, EventActivity.class);
                 intent1.putExtra("selectedDate",myDate);
-                intent1.putExtra("selectedId",Integer.toString(myId));
+                intent1.putExtra("selectedId",myId);
                 startActivity(intent1);
                 Log.d("misa","sa apasat butonul");
                 finish();
@@ -88,32 +85,23 @@ public class CalendarActivity extends AppCompatActivity {
         });
     }
 
-    private void initializeDisplayContent(){
-        listEvents = (ListView) findViewById(R.id.activity_list);
-        Log.d("misa",myDate);
-        Cursor myEvents = myDb.getAllDay(myDate);
-//        Cursor myEvents = myDb.getAllData();
-        Log.d("misa","a ajuns si aici");
-        if (myEvents != null && myEvents.getCount() >0) {
-            Log.d("misa","s-a gasit elemente");
-            Log.d("misa",myEvents.getString(2).toString());
-            Log.d("misa","6");
-            myId = Integer.parseInt(myEvents.getString(0));
-            Log.d("misa","1");
-            List<String> events = new ArrayList<String>();
-            Log.d("misa","2");
 
-            while (myEvents.moveToNext()) {
-                events.add(myEvents.getString(2));
-            }
-            Log.d("misa","3");
-            ArrayAdapter<String> eventsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, events);
-            Log.d("misa","4");
-            listEvents.setAdapter(eventsAdapter);
-            Log.d("misa","5");
-        }
-        else{
-            Log.d("misa","nu este numic");
-        }
+    private void readDate(){
+        Log.d("misa","nu se primes");
+         events = realm.where(Event.class).equalTo("eDate",myDate).findAll();
+//        events = realm.where(Event.class).findAll();
+         Log.d("misa","marime: "+ Integer.toString(events.size()));
     }
+    private void initializeDisplayContent() {
+        if (events.size() >0) {
+        eventsShow = new ArrayList<String>();
+        for (Event event : events) {
+            eventsShow.add(event.toString());
+
+        }
+        ArrayAdapter<String> eventsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, eventsShow);
+        listEvents.setAdapter(eventsAdapter);
+    }
+}
+
 }

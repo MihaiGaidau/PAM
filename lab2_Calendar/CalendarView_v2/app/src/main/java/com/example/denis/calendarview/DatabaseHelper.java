@@ -11,7 +11,7 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "Data.db";
-    public static final String TABLE_NAME  = "EVENTS";
+    public static final String TABLE_NAME  = "event_table";
     public static final String COL_1 = "ID";
     public static final String COL_2 = "DDATE";
     public static final String COL_3 = "TITLE";
@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d("misa","tabelul urmeaza sa se creeze");
-        db.execSQL("create table "+ TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, DDATE VARCHAR(255), TITLE VARCHAR(255), LOCATION VARCHAR(255), STARTTIME VARCHAR(255), ENDTIME VARCHAR(255), NOTE VARCHAR(255))");
+        db.execSQL("create table "+ TABLE_NAME +" (ID INTEGER PRIMARY KEY AUTOINCREMENT, DDATE VARCHAR(255), TITLE VARCHAR(255), LOCATION VARCHAR(255), STARTTIME VARCHAR(255), ENDTIME VARCHAR(255), NOTE VARCHAR(255))");
         Log.d("misa","tabelul sa creat");
     }
 
@@ -76,19 +76,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return res;
 
     }
-    public boolean updateData(int id, Event myE){
+    public boolean updateData(String id, Event myE){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_1,id);
         contentValues.put(COL_2,myE.getDate());
         contentValues.put(COL_3,myE.getTitle());
         contentValues.put(COL_4,myE.getLocation());
         contentValues.put(COL_5,myE.getStartTime());
         contentValues.put(COL_6,myE.getEndTime());
         contentValues.put(COL_7,myE.getNote());
-        db.update(TABLE_NAME, contentValues,"ID = '"+id+"'",null);
+        db.update(TABLE_NAME, contentValues,"ID = ?",new String[]{id});
         return true;
     }
-    public boolean updateData(int id, String data, String title, String location, String startt,String endt, String note){
+    public boolean updateData(String id, String data, String title, String location, String startt,String endt, String note){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_1,id);
@@ -98,22 +99,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_5,startt);
         contentValues.put(COL_6,endt);
         contentValues.put(COL_7,note);
-        db.update(TABLE_NAME, contentValues,"ID = '"+id+"'",null);
+        db.update(TABLE_NAME, contentValues,"ID = ?",new String[]{id});
         return true;
     }
-    public Cursor getById(int id){
+    public Cursor getById(String id){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where ID ='" + id + "'",null );
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where ID = ?",new String[] {id});
         return res;
     }
     public Cursor getAllDay(String date){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where DDATE = '"+date+"'",null);
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " where DDATE= ?",new String[]{date});
         return res;
     }
 
-    public Integer deleteData(int id){
+    public Integer deleteData(String id){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME,"ID ='" + id + "'",null);
+        return db.delete(TABLE_NAME,"ID = ?", new String[] {id});
     }
 }

@@ -72,17 +72,17 @@ public class EventActivity extends AppCompatActivity {
     }
 
     private void manageView() {
-        if (Integer.parseInt(myId) == -1){
-            ;
-        }
-        else{
-            Cursor myEvent = myDb.getById(myId);
-            eTitle.setText(myEvent.getString(2));
-            eLocation.setText(myEvent.getString(3));
-            startTime.setText(myEvent.getString(4));
-            endTime.setText(myEvent.getString(5));
-            eNote.setText(myEvent.getString(6));
-        }
+//        if (Integer.parseInt(myId) == -1){
+//            ;
+//        }
+//        else{
+//            Cursor myEvent = myDb.getById(myId);
+//            eTitle.setText(myEvent.getString(2));
+//            eLocation.setText(myEvent.getString(3));
+//            startTime.setText(myEvent.getString(4));
+//            endTime.setText(myEvent.getString(5));
+//            eNote.setText(myEvent.getString(6));
+//        }
     }
 
     private void saveBtnClicked() {
@@ -109,7 +109,8 @@ public class EventActivity extends AppCompatActivity {
                 if (Integer.parseInt(myId) == -1)
                     isInserted = insertNew();
                 else
-                    isInserted = editData();
+                    isInserted = true;
+//                    isInserted = editData();
 
                 if (isInserted == true)
                     Toast.makeText(EventActivity.this,"Saved",Toast.LENGTH_LONG).show();
@@ -123,9 +124,9 @@ public class EventActivity extends AppCompatActivity {
             }
         });
     }
-    public boolean editData(){
-        return myDb.updateData(myId,myDate,eTitle.getText().toString(),eLocation.getText().toString(),startTime.getText().toString(),endTime.getText().toString(),eNote.getText().toString());
-    }
+//    public boolean editData(){
+//        return myDb.updateData(myId,myDate,eTitle.getText().toString(),eLocation.getText().toString(),startTime.getText().toString(),endTime.getText().toString(),eNote.getText().toString());
+//    }
     public boolean insertNew(){
         return  myDb.insertData(myDate,eTitle.getText().toString(),eLocation.getText().toString(),startTime.getText().toString(),endTime.getText().toString(),eNote.getText().toString());
     }
